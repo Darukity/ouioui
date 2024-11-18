@@ -1,5 +1,7 @@
+require('dotenv').config()
 const express = require ('express');
 const app = express();
+const mongoose = require('mongoose');
 
 
 let books = [
@@ -15,6 +17,14 @@ let books = [
 
 //Parse des requetes en JSON
 app.use(express.json())
+
+mongoose
+    .connect(process.env.DATABASE_URL)
+    .then(() => {
+        console.log('Connection has been etablished successfully')
+    }).catch((error) => {
+        console.error('Unable to connect database: ', error)
+})
 
 
 app.get('/', (req, res) => {
@@ -34,12 +44,20 @@ app.get('/api/books/:id', (req, res) => {
     res.send(book)
 });
 
-
+const BookModel = require('./models/Book');
 // POST /books create a book
 app.post('/api/books', (req, res) => {
-    const bookToAdd = req.body;
-    books.push(bookToAdd);
-    res.send('Le livre a bien crée')
+
+   const newBook = new BookModel({
+       label: req.body.label,
+       description: req.body.description
+   })
+    newBook.save()
+    res.status(201);
+   res.send({
+       success: true,
+       book : newBook
+   })
 });
 
 // PUT /books update a book
