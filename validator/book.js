@@ -16,6 +16,11 @@ module.exports = {
                     type: 'string',
                     minLength: 1,
                     errorMessage: 'Book label is missing or incorrect'
+                },
+                authorId: {
+                    type: 'string',
+                    minLength: 1,
+                    errorMessage: 'Book AuthorId is missing or incorrect'
                 }
             },
             required: ['label']

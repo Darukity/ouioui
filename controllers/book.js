@@ -15,7 +15,16 @@ module.exports = {
                 label: req.body.label,
                 description: req.body.description
             })
+
+            newBook.author = req.user;
             newBook.save()
+
+            const { id, firstname, lastname } = req.user
+            newBook.author = {
+                id,
+                firstname,
+                lastname
+            }
             res.status(201);
             res.send({
                 success: true,

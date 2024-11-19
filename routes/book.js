@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const bookController = require('../controllers/book');
-const {verifyToken} = require('../midlleware/jwt')
+const {verifyToken} = require('../middleware/jwt')
 
 // POST /  create a book
 router.post('/', verifyToken, bookController.createBook);
