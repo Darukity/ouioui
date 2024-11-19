@@ -2,7 +2,6 @@ const UserModel = require('../models/User');
 const {verifyUser} = require('../validator/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
-const {emit} = require("nodemon");
 
 module.exports = {
 
@@ -39,45 +38,44 @@ module.exports = {
 
     login: async(req, res) => {
         try{
-            const user = await UserModel.findOne({email: req.body.email})
-            if(!user) {
-                res.status(401).send({
-                    message: 'Email or Password wrong'
-                })
-            } else {
-                const same = await  bcrypt.compare(req.body.password, user.password)
-                console.log("same =>", same)
-                if(same) {
-                    const userData= {
-                        email: user.email
-                    }
-                    const secret = process.env.JWT_SECRET || 'secret';
-                    const jwtData = {
-                        expiresIn: process.env.JWT_TIMEOUT_DURATION || '1h'
-                    };
-
-                    const token = jwt.sign(userData, secret,  jwtData);
-                    res.send({
-                        message: 'Succesfully Login',
-                        user: {
-                            firstname: user.firstname,
-                            lastname: user.lastname,
-                            ...userData,
-                            token
-                        }
-                    })
-                } else {
-                    res.status(401).send({
-                        message: 'Email or Password wrong'
-                    })
-                }
+            const { email, password } = req.body;
+            const user = await UserModel.findOne({email});
+            if (!user) {
+                return res.status(401).send({ message: 'Email or Password wrong' });
             }
 
-        }catch (error) {
+            const isPasswordCorrect = await bcrypt.compare(password, user.password);
+            if (!isPasswordCorrect) {
+                return res.status(401).send({ message: 'Email or Password wrong' });
+            }
+
+            const userData= {
+                email: user.email
+            }
+            const secret = process.env.JWT_SECRET || 'secret';
+            const jwtData = {
+                expiresIn: process.env.JWT_TIMEOUT_DURATION || '1h'
+            };
+
+            const token = jwt.sign(
+                userData,
+                secret,
+               jwtData
+            );
+
+            res.status(200).send({
+                message: 'Successfully logged in',
+                user: {
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    email: user.email,
+                    token,
+                },
+            });
+        } catch (error) {
             res.status(500).send({
                 message: error.message || 'some error occurred while logging user'
             })
         }
     }
-
 }
