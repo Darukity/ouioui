@@ -1,7 +1,6 @@
 const { Validator } = require('jsonschema');
 
 module.exports = {
-
     verifyBook: (book) => {
         let validator = new Validator();
         let bookSchema = {
@@ -24,20 +23,19 @@ module.exports = {
                 }
             },
             required: ['label']
-        }
+        };
         let result = validator.validate(book, bookSchema);
 
         // if validation failed
-        if(Array.isArray(result.errors) && result.errors.length) {
+        if (Array.isArray(result.errors) && result.errors.length) {
             let failedInputs = '';
 
             result.errors.forEach((error) => {
-                failedInputs += (error.schema.errorMessage || error.message) + ', '
+                failedInputs += (error.schema.errorMessage || error.message) + ', ';
             });
-          return {
-              message: failedInputs
-          };
+            return {
+                message: failedInputs
+            };
         }
     }
-
-}
+};

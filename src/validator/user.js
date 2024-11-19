@@ -1,7 +1,6 @@
 const { Validator } = require('jsonschema');
 
 module.exports = {
-
     verifyUser: (user) => {
         let validator = new Validator();
         let userSchema = {
@@ -32,21 +31,20 @@ module.exports = {
                 }
             },
             required: ['firstname', 'lastname', 'email', 'password']
-        }
+        };
         let result = validator.validate(user, userSchema);
 
         // console.log('error => ', result)
         // if validation failed
-        if(Array.isArray(result.errors) && result.errors.length) {
+        if (Array.isArray(result.errors) && result.errors.length) {
             let failedInputs = '';
 
             result.errors.forEach((error) => {
-                failedInputs += (error.schema.error || error.message) + ', '
+                failedInputs += (error.schema.error || error.message) + ', ';
             });
             return {
                 message: failedInputs
             };
         }
     }
-
-}
+};

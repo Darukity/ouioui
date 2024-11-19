@@ -1,57 +1,56 @@
-const {verifyBook} = require("../validator/book");
-const BookModel = require("../models/Book");
+const { verifyBook } = require('../validator/book');
+const BookModel = require('../models/Book');
 module.exports = {
-
     createBook: (req, res) => {
         try {
-            const isNotValidate = verifyBook(req.body)
-            if(isNotValidate) {
+            const isNotValidate = verifyBook(req.body);
+            if (isNotValidate) {
                 res.status(400);
                 res.send({
                     error: isNotValidate.message
-                })
+                });
             }
             const newBook = new BookModel({
                 label: req.body.label,
                 description: req.body.description
-            })
+            });
 
             newBook.author = req.user;
-            newBook.save()
+            newBook.save();
 
-            const { id, firstname, lastname } = req.user
+            const { id, firstname, lastname } = req.user;
             newBook.author = {
                 id,
                 firstname,
                 lastname
-            }
+            };
             res.status(201);
             res.send({
                 success: true,
-                book : newBook
-            })
+                book: newBook
+            });
         } catch (error) {
             res.status(500);
             res.send({
                 error: error.message
-            })
+            });
         }
     },
 
     getAllBooks: async (req, res) => {
         try {
             const books = await BookModel.find();
-            res.send(books)
+            res.send(books);
         } catch (error) {
             res.status(500).send({
                 message: error.message || 'Cannot retrieve all books'
-            })
+            });
         }
     },
 
     getBook: async (req, res) => {
+        const bookId = req.params.id;
         try {
-            const bookId = req.params.id;
             const book = await BookModel.findById(bookId);
             res.send(book);
         } catch (error) {
@@ -66,18 +65,17 @@ module.exports = {
         try {
             const bookId = req.params.id;
 
-            const isNotValidate = verifyBook(req.body)
-            if(isNotValidate) {
+            const isNotValidate = verifyBook(req.body);
+            if (isNotValidate) {
                 res.status(400);
                 res.send({
                     error: isNotValidate.message
-                })
+                });
             }
 
             const updatedBook = await BookModel.findByIdAndUpdate(bookId, req.body, {
                 new: true
             });
-
 
             // Vérifiez si le livre existe
             if (!updatedBook) {
@@ -88,7 +86,7 @@ module.exports = {
 
             res.send({
                 message: 'BookModel was updated successfully.',
-                data: updatedBook,
+                data: updatedBook
             });
         } catch (error) {
             res.status(500).send({
@@ -107,7 +105,7 @@ module.exports = {
                     message: 'BookModel has been removed successfully.'
                 });
             } else {
-                 res.status(400).send(`No record with given id: ${bookId}`);
+                res.status(400).send(`No record with given id: ${bookId}`);
             }
         } catch (error) {
             res.status(500).send({
@@ -115,4 +113,4 @@ module.exports = {
             });
         }
     }
-}
+};

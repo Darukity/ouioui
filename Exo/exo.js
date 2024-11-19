@@ -8,8 +8,6 @@ for (let i = 0; i < episodes.length; i++) {
 }
 console.log(`Total : ${total}`);
 
-
-
 //2
 const durationTotal = total * episodeDuration;
 console.log(`Duree total en minutes : ${durationTotal} minutes`);
