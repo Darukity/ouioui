@@ -19,6 +19,8 @@ module.exports = {
                         message: 'Invalid token'
                     })
                 }
+
+                req.user = user;
                 next()
             }
 
