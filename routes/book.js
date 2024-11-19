@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const bookController = require('../controllers/book');
+const {verifyToken} = require('../midlleware/jwt')
 
 // POST /  create a book
-router.post('/', bookController.createBook);
+router.post('/', verifyToken, bookController.createBook);
 
 // GET /  get all books
 router.get('/', bookController.getAllBooks);
