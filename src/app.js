@@ -4,10 +4,26 @@ const app = express();
 const mongoose = require('mongoose');
 const {verifyBook} = require('./validator/book');
 const apiRouter = require('./routes');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
 
 
 //Parse des requetes en JSON
 app.use(express.json())
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Book Api',
+            version: '1.0.0'
+        }
+    },
+    apis: ['./routes/*.js']
+}
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 mongoose
     .connect(process.env.DATABASE_URL)
