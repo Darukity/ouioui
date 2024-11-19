@@ -2,6 +2,8 @@ require('dotenv').config()
 const express = require ('express');
 const app = express();
 const mongoose = require('mongoose');
+const {verifyBook} = require('./validator/book');
+const apiRouter = require('./routes');
 
 
 let books = [
@@ -31,33 +33,15 @@ app.get('/', (req, res) => {
     res.send('Hello word');
 });
 
+app.use('/api', apiRouter);
 
 // GET /books  get all books
-app.get('/api/books', (req, res) => {
-    res.send(books)
-});
 
 // GET /books/:id  get book by id
 app.get('/api/books/:id', (req, res) => {
     const bookId = +req.params.id
     const book = books.find(book => book.id === bookId)
     res.send(book)
-});
-
-const BookModel = require('./models/Book');
-// POST /books create a book
-app.post('/api/books', (req, res) => {
-
-   const newBook = new BookModel({
-       label: req.body.label,
-       description: req.body.description
-   })
-    newBook.save()
-    res.status(201);
-   res.send({
-       success: true,
-       book : newBook
-   })
 });
 
 // PUT /books update a book
